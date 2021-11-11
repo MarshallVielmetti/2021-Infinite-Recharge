@@ -1,5 +1,6 @@
 {
   "java.configuration.updateBuildConfiguration": "automatic",
+  "editor.formatOnSave": true,
   "java.server.launchMode": "Standard",
   "files.exclude": {
     "**/.git": true,
