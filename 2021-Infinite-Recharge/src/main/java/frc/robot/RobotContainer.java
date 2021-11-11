@@ -13,8 +13,14 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.HoldSubsystem;
 import frc.robot.subsystems.HoodSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -30,6 +36,7 @@ public class RobotContainer {
   private final HoldSubsystem m_holdSubsystem = new HoldSubsystem();
   private final HoodSubsystem m_hoodSubsystem = new HoodSubsystem();
   private final TurretSubsystem m_turretSubsystem = new TurretSubsystem();
+  private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
 
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
@@ -54,6 +61,34 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    // MECH CONTROLLER BINDINGS
+
+    // INTAKE BINDINGS
+
+    // A Button - Run Intake & Spin Hold
+    new JoystickButton(m_xbox1, 1).whenHeld(new StartEndCommand(() -> {
+      m_intakeSubsystem.setDown(); // Make sure extended
+      m_intakeSubsystem.defaultIntake();
+      m_holdSubsystem.defaultHold();
+    }, () -> {
+      m_holdSubsystem.stop();
+      m_intakeSubsystem.stop();
+    }, m_intakeSubsystem, m_holdSubsystem));
+
+    // X Button - Exhaust Intake
+    new JoystickButton(m_xbox1, 3).whenHeld(new StartEndCommand(() -> {
+      m_intakeSubsystem.setDown();
+      m_intakeSubsystem.defaultExhaust();
+    }, () -> {
+      m_intakeSubsystem.stop();
+    }, m_intakeSubsystem));
+
+    // DPad Up - Intake Up
+    new POVButton(m_xbox1, 0).whenPressed(new InstantCommand(m_intakeSubsystem::setUp, m_intakeSubsystem));
+
+    // DPad Down - Intake Down
+    new POVButton(m_xbox1, 180).whenPressed(new InstantCommand(m_intakeSubsystem::setDown, m_intakeSubsystem));
 
   }
 
