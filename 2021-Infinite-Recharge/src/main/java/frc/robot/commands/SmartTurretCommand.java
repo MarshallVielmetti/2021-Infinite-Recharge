@@ -12,8 +12,8 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 
 /**
- * 1st - speeds up the fly wheel & targets turret w/Vision
- * 
+ * 1st - speeds up the fly wheel & targets turret w/Vision 2nd - Maintains
+ * speeds, begins doing smart shoot
  */
 public class SmartTurretCommand extends SequentialCommandGroup {
     private NetworkTable m_visionTable;
