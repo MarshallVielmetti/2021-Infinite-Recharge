@@ -68,8 +68,6 @@ public final class Constants {
     public static class ShooterConstants {
 
         public static final int kFlywheelMotorID = 31;
-        public static final int kTurretMotorID = 34;
-        public static final int kHoodMotorID = 32;
 
         public static final double kFlywheelMomentofIntertia = 0.00032; // kg / m^2
         // Reduction between motors and encoder, as output over input. If the flywheel
@@ -85,17 +83,60 @@ public final class Constants {
 
         public static final double kFlywheelRelmsControlEffort = 12.0; // voltage
 
-        public static final int kTurretEncoderMax = 1000;
-        public static final int kTurretEncoderMin = -1000;
+        public static final double kFlywheelEncoderVelocityConversion = 1;
 
+        public static final double kSpinupRadPerSec = 1; // Radians per second speedup
+    }
+
+    public static class TurretConstants {
+        public static final int kTurretMotorID = 34;
         // TODO PID constants for the turret
         public static final double kTurretKp = 0.1;
         public static final double kTurretKi = 0.0001;
         public static final double kTurretKd = 0.002;
 
-        public static final double kHoodKp = 0.1;
-        public static final double kHoodKi = 0.0001;
-        public static final double kHoodKd = 0.002;
+        public static final int kTurretEncoderMax = 1000;
+        public static final int kTurretEncoderMin = -1000;
+
+        // TODO - For the motor feedforward
+        public static final double kTurretKs = 2;
+        public static final double kTurretKv = 1;
+        public static final double kTurretKa = 0.5;
+
+        public static final double kTurretVMax = 0.2; // Angular velocity, rad/s
+        public static final double kTurretAMax = 0.05; // Angular acceleartion rad/s^2
+
+        // TODO - Figure out how to get encoder from TalonSRX
+        public static final int[] kEncoderPorts = { 0, 1 };
+
+        // TODO
+        public static final double kEncoderDistancePerPulse = 0.001; // Radians / pulse
+    }
+
+    public static class HoodConstants {
+
+        public static final int kHoodMotorID = 32;
+
+        // TODO Find good values
+        public static final double kHoodKp = 5e-5;
+        public static final double kHoodKi = 1e-6;
+        public static final double kHoodKd = 0;
+        public static final double kHoodkIz = 0;
+        public static final double kHoodKff = 0.002;
+        public static final double kMaxOutput = 0.4;
+        public static final double kMinOutput = -0.4;
+        public static final double kMaxRPM = 5700; // RPM
+        public static final double kMaxVel = 2000; // RPM
+        public static final double kMinVel = 200;
+        public static final double kMaxAcc = 1500; // RPM
+        public static final double kAllowedErr = 0.02;
+
+        // PID coefficients
+
+        // TODO - What do these factors do???
+        public static final double kHoodEncoderPositionConversion = 1;
+        public static final double kHoodEncoderVelocityConversion = 1;
+
     }
 
     public static class OIConstants {

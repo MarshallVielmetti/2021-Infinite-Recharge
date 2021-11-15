@@ -14,6 +14,7 @@ import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.HoldSubsystem;
 import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -35,7 +36,8 @@ public class RobotContainer {
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
   private final HoldSubsystem m_holdSubsystem = new HoldSubsystem();
   private final HoodSubsystem m_hoodSubsystem = new HoodSubsystem();
-  private final TurretSubsystem m_turretSubsystem = new TurretSubsystem();
+  private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
+  private final TurretSubsystem m_tTurretSubsystem = new TurretSubsystem();
   private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
 
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
