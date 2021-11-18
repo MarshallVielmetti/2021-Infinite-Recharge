@@ -19,10 +19,10 @@ public class CustomXBox extends XboxController {
     }
 
     public double getLeftY() {
-        return super.getX(Hand.kLeft);
+        return super.getY(Hand.kLeft);
     }
 
     public double getRightY() {
-        return super.getX(Hand.kRight);
+        return super.getY(Hand.kRight);
     }
 }
