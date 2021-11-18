@@ -34,11 +34,11 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
   private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
-  private final HoldSubsystem m_holdSubsystem = new HoldSubsystem();
-  private final HoodSubsystem m_hoodSubsystem = new HoodSubsystem();
-  private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
-  private final TurretSubsystem m_tTurretSubsystem = new TurretSubsystem();
-  private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
+  // private final HoldSubsystem m_holdSubsystem = new HoldSubsystem();
+  // private final HoodSubsystem m_hoodSubsystem = new HoodSubsystem();
+  // private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
+  // private final TurretSubsystem m_tTurretSubsystem = new TurretSubsystem();
+  // private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
 
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
@@ -52,7 +52,7 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    m_driveSubsystem.setDefaultCommand(new ArcadeDrive(m_driveSubsystem, m_xbox1::getLeftX, m_xbox0::getRightY));
+    m_driveSubsystem.setDefaultCommand(new ArcadeDrive(m_driveSubsystem, m_xbox1::getLeftY, m_xbox1::getRightX));
 
   }
 
@@ -69,28 +69,30 @@ public class RobotContainer {
     // INTAKE BINDINGS
 
     // A Button - Run Intake & Spin Hold
-    new JoystickButton(m_xbox1, 1).whenHeld(new StartEndCommand(() -> {
-      m_intakeSubsystem.setDown(); // Make sure extended
-      m_intakeSubsystem.defaultIntake();
-      m_holdSubsystem.defaultHold();
-    }, () -> {
-      m_holdSubsystem.stop();
-      m_intakeSubsystem.stop();
-    }, m_intakeSubsystem, m_holdSubsystem));
+    // new JoystickButton(m_xbox1, 1).whenHeld(new StartEndCommand(() -> {
+    // m_intakeSubsystem.setDown(); // Make sure extended
+    // m_intakeSubsystem.defaultIntake();
+    // m_holdSubsystem.defaultHold();
+    // }, () -> {
+    // m_holdSubsystem.stop();
+    // m_intakeSubsystem.stop();
+    // }, m_intakeSubsystem, m_holdSubsystem));
 
-    // X Button - Exhaust Intake
-    new JoystickButton(m_xbox1, 3).whenHeld(new StartEndCommand(() -> {
-      m_intakeSubsystem.setDown();
-      m_intakeSubsystem.defaultExhaust();
-    }, () -> {
-      m_intakeSubsystem.stop();
-    }, m_intakeSubsystem));
+    // // X Button - Exhaust Intake
+    // new JoystickButton(m_xbox1, 3).whenHeld(new StartEndCommand(() -> {
+    // m_intakeSubsystem.setDown();
+    // m_intakeSubsystem.defaultExhaust();
+    // }, () -> {
+    // m_intakeSubsystem.stop();
+    // }, m_intakeSubsystem));
 
-    // DPad Up - Intake Up
-    new POVButton(m_xbox1, 0).whenPressed(new InstantCommand(m_intakeSubsystem::setUp, m_intakeSubsystem));
+    // // DPad Up - Intake Up
+    // new POVButton(m_xbox1, 0).whenPressed(new
+    // InstantCommand(m_intakeSubsystem::setUp, m_intakeSubsystem));
 
-    // DPad Down - Intake Down
-    new POVButton(m_xbox1, 180).whenPressed(new InstantCommand(m_intakeSubsystem::setDown, m_intakeSubsystem));
+    // // DPad Down - Intake Down
+    // new POVButton(m_xbox1, 180).whenPressed(new
+    // InstantCommand(m_intakeSubsystem::setDown, m_intakeSubsystem));
 
   }
 
