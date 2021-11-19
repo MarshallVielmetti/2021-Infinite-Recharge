@@ -7,6 +7,7 @@ import static frc.robot.Constants.TurretConstants.*;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 
@@ -21,11 +22,19 @@ public class TurretSubsystem extends ProfiledPIDSubsystem {
 
     private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(kTurretKs, kTurretKv, kTurretKa);
 
+    private final boolean debug = true;
+    private double debugSetpos = 0;
+
     public TurretSubsystem() {
         super(new ProfiledPIDController(kTurretKp, kTurretKi, kTurretKd,
                 new TrapezoidProfile.Constraints(kTurretVMax, kTurretAMax), 0.02));
 
+        // This encoderDistancePerPulse should be in fractions of radians per pulse of
+        // quad encoder
         m_turretEncoder.setDistancePerPulse(kEncoderDistancePerPulse);
+        if (debug) {
+            this.initDebug();
+        }
     }
 
     // TODO
@@ -38,7 +47,7 @@ public class TurretSubsystem extends ProfiledPIDSubsystem {
     }
 
     protected void useOutput(double output, TrapezoidProfile.State setpoint) {
-        // Calculate the feedforward from the sepoint
+        // Calculate the feedforward from the setpoint
         double feedforward = m_feedforward.calculate(setpoint.position, setpoint.velocity);
         // Add the feedforward to the PID output to get the motor output
         m_turretMotor.set(ControlMode.Current, output + feedforward);
@@ -47,4 +56,22 @@ public class TurretSubsystem extends ProfiledPIDSubsystem {
     public void setVisionGoal(double tx) {
 
     }
+
+    public void doDebug() {
+        double setPos = SmartDashboard.getNumber("Turret Set Position", 0);
+        if (setPos != debugSetpos)
+            setTarget(setPos);
+    }
+
+    public void initDebug() {
+        SmartDashboard.putNumber("Turret Position", getMeasurement());
+        SmartDashboard.putNumber("Turret Set Position", 0);
+    }
+
+    public void setTarget(double target) {
+        if (target < kTurretEncoderMax && target > kTurretEncoderMin) {
+            m_controller.setGoal(target);
+        }
+    }
+
 }

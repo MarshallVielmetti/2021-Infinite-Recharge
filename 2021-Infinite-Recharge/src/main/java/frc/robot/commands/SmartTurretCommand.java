@@ -57,10 +57,13 @@ public class SmartTurretCommand extends SequentialCommandGroup {
                 // Smart Spin turret to shooting velocity
                 // "finishes" command when turret has reached margin of error around desired
                 // velocity
-                new FunctionalCommand(shooterSubsystem::smartSpin, null, null, shooterSubsystem::getIsAtSpeed,
-                        shooterSubsystem),
-                new FunctionalCommand(
-                        // Set goal to vision on command start
+                new FunctionalCommand(shooterSubsystem::smartSpin, null, (interrupted) -> {
+                    // Stops energy being sent to flywheel only if interrupted
+                    if (interrupted) {
+                        shooterSubsystem.stop();
+                    }
+                }, shooterSubsystem::getIsAtSpeed, shooterSubsystem), new FunctionalCommand(
+                        // Make sure turret subsystem enabled
                         turretSubsystem::enable,
                         // This might cause problems to be honest.
                         // Might end up swapping this statement to be first.
@@ -68,9 +71,15 @@ public class SmartTurretCommand extends SequentialCommandGroup {
                         // Stop moving at the end of the command
                         // Would rather not mess around with enable / disable.
                         // I'd like it to maintain it's position
-                        (interrupted) -> turretSubsystem.disable(),
+                        (interrupted) -> {
+                            // Only disable PID if interrupted
+                            if (interrupted) {
+                                turretSubsystem.disable();
+                            }
+                        },
                         // End condition
-                        () -> Math.abs(m_visX) <= kTurretVisionXTolerance)));
+                        () -> Math.abs(m_visX) <= kTurretVisionXTolerance, turretSubsystem),
+                new FunctionalCommand(hoodSubsystem::enable, onExecute, onEnd, isFinished, hoodSubsystem)));
     }
 
     @Override

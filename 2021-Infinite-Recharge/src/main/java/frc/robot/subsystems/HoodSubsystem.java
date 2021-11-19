@@ -3,11 +3,12 @@ package frc.robot.subsystems;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import static frc.robot.Constants.HoodConstants.*;
 
-import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -19,7 +20,14 @@ public class HoodSubsystem extends SubsystemBase {
     private final CANEncoder m_encoder = m_motor.getEncoder();
     private final CANPIDController m_pidController = m_motor.getPIDController();
 
+    private final boolean debug = true;
+    private double debugSetpos = 0;
+
     public HoodSubsystem() {
+        if (this.debug) {
+            this.initDebug();
+        }
+
         m_pidController.setP(kHoodKp);
         m_pidController.setI(kHoodKi);
         m_pidController.setD(kHoodKd);
@@ -42,6 +50,36 @@ public class HoodSubsystem extends SubsystemBase {
         m_pidController.setSmartMotionMinOutputVelocity(kMinVel, smartMotionSlot);
         m_pidController.setSmartMotionMaxAccel(kMaxAcc, smartMotionSlot);
         m_pidController.setSmartMotionAllowedClosedLoopError(kAllowedErr, smartMotionSlot);
+    }
+
+    @Override
+    public void periodic() {
+        // Check if hitting limit switch? and if so zero and make sure moving in the
+        // opposite direction?
+        if (this.debug) {
+            this.doDebug();
+        }
+    }
+
+    public void zero() {
+        // Drive until reaches non-existent limit switch
+        // set encoder position to zero
+
+    }
+
+    public void setDesiredPosition(double position) {
+        m_pidController.setReference(position, ControlType.kPosition);
+    }
+
+    private void initDebug() {
+        SmartDashboard.putNumber("Hood Position", m_encoder.getPosition());
+        SmartDashboard.putNumber("Hood Set Position", 0);
+    }
+
+    private void doDebug() {
+        double setPos = SmartDashboard.getNumber("Hood Set Position", 0);
+        if (setPos != debugSetpos)
+            this.setDesiredPosition(setPos);
     }
 
 }

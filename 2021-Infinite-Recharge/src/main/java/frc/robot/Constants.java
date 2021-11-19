@@ -117,6 +117,7 @@ public final class Constants {
         // TODO
         public static final double kEncoderDistancePerPulse = 0.001; // Radians / pulse
 
+        public static final double kTurretPIDTolerance = 0.5; // TODO
         public static final double kTurretVisionXTolerance = 15; // Pixels?
     }
 
