@@ -12,6 +12,8 @@ import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 
+import static frc.robot.Constants.TurretConstants.kTurretVisionXTolerance;
+
 /**
  * 1st - speeds up the fly wheel & targets turret w/Vision 2nd - Maintains
  * speeds, begins doing smart shoot
@@ -53,9 +55,13 @@ public class SmartTurretCommand extends SequentialCommandGroup {
             ShooterSubsystem shooterSubsystem, HoldSubsystem holdSubsystem) {
         addCommands(parallel(
                 // Smart Spin turret to shooting velocity
-                new InstantCommand(shooterSubsystem::smartSpin, shooterSubsystem), new FunctionalCommand(
+                // "finishes" command when turret has reached margin of error around desired
+                // velocity
+                new FunctionalCommand(shooterSubsystem::smartSpin, null, null, shooterSubsystem::getIsAtSpeed,
+                        shooterSubsystem),
+                new FunctionalCommand(
                         // Set goal to vision on command start
-                        () -> turretSubsystem.enable(),
+                        turretSubsystem::enable,
                         // This might cause problems to be honest.
                         // Might end up swapping this statement to be first.
                         () -> turretSubsystem.setVisionGoal(m_visX),
@@ -64,7 +70,7 @@ public class SmartTurretCommand extends SequentialCommandGroup {
                         // I'd like it to maintain it's position
                         (interrupted) -> turretSubsystem.disable(),
                         // End condition
-                        () -> Math.abs(m_visX) <= m_turretXTolerance)));
+                        () -> Math.abs(m_visX) <= kTurretVisionXTolerance)));
     }
 
     @Override
