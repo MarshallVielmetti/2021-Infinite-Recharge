@@ -74,7 +74,7 @@ public final class Constants {
         // Reduction between motors and encoder, as output over input. If the flywheel
         // spins slower than
         // the motors, this number should be greater than one.
-        public static final double kFlywheelGearing = 1.0;
+        public static final double kFlywheelGearing = 1.0; // There is not reduction on our flywheels???
 
         public static final double kFlywheelEncoderAccuracy = 0.01;
 
@@ -87,6 +87,10 @@ public final class Constants {
         public static final double kFlywheelEncoderVelocityConversion = 1;
 
         public static final double kSpinupRadPerSec = 1; // Radians per second speedup
+
+        public static final double kDesiredVelocity = 15; // Radians per second ?
+
+        public static final double kVelocityMargin = kDesiredVelocity * 0.05; // Allows a 5% margin - rads / second
     }
 
     public static class TurretConstants {
@@ -112,6 +116,8 @@ public final class Constants {
 
         // TODO
         public static final double kEncoderDistancePerPulse = 0.001; // Radians / pulse
+
+        public static final double kTurretVisionXTolerance = 15; // Pixels?
     }
 
     public static class HoodConstants {

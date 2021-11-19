@@ -34,7 +34,7 @@ public class ShooterSubsystem extends SubsystemBase {
         // States: [velocity], in radians per second.
         // Inputs (what we can "put in"): [voltage], in volts.
         // Outputs (what we can measure): [velocity], in radians per second.
-        private final LinearSystem<N1, N1, N1> m_flywheelPlant = LinearSystemId.createFlywheelSystem(DCMotor.getNEO(1),
+        private final LinearSystem<N1, N1, N1> m_flywheelPlant = LinearSystemId.createFlywheelSystem(DCMotor.getNEO(2),
                         kFlywheelMomentofIntertia, kFlywheelGearing);
 
         // 1st Vec Builder - How accurate we think our model is
@@ -94,6 +94,14 @@ public class ShooterSubsystem extends SubsystemBase {
         public void stop() {
                 this.isDriven = false;
                 m_motor1.setVoltage(0);
+        }
+
+        public boolean getIsAtSpeed() {
+                if (m_encoder.getVelocity() >= kDesiredVelocity - kVelocityMargin
+                                || m_encoder.getVelocity() <= kDesiredVelocity + kVelocityMargin) {
+                        return true;
+                }
+                return false;
         }
 
         @Override
