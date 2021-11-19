@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import frc.robot.subsystems.HoldSubsystem;
 import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
@@ -23,25 +24,33 @@ public class SmartTurretCommand extends SequentialCommandGroup {
 
     private double m_turretXTolerance = 15;
 
+    private TurretSubsystem m_turretSubsystem;
+    private HoodSubsystem m_hoodSubsystem;
+    private ShooterSubsystem m_shooterSubsystem;
+    private HoldSubsystem m_holdSubsystem;
+
     /**
      * Smart Turret Command - Handles everything to do with shooting at a target.
      * 
      * @param turretSubsystem  - turret subsystem
      * @param hoodSubsystem    - hood subsystem
      * @param shooterSubsystem - shooter subsystem
+     * @param holdSubsystem    - hold subsystem
      * 
      *                         This command does the entire process of spinning the
-     *                         flywheel, Aligning turret and hood, and spinning up
-     *                         flywheel Then it should maintain those positions
-     *                         while also shooting balls / spinning the spindexer
-     *                         and hold eventually graduate this to doing the smart
-     *                         spin or whatever
+     *                         flywheel, and ligning turret and hood. Then it should
+     *                         maintain those positions while also shooting balls /
+     *                         spinning the spindexer and hold eventually graduate
+     *                         this to doing the smart spin or whatever
      * 
      *                         Parallel setup new parallel, one cmd grp maintains
      *                         and another cmd group runs hood
+     * 
+     *                         Should run the second parallel command group until
+     *                         the whileHeld condition is met.
      */
     public SmartTurretCommand(TurretSubsystem turretSubsystem, HoodSubsystem hoodSubsystem,
-            ShooterSubsystem shooterSubsystem) {
+            ShooterSubsystem shooterSubsystem, HoldSubsystem holdSubsystem) {
         addCommands(parallel(
                 // Smart Spin turret to shooting velocity
                 new InstantCommand(shooterSubsystem::smartSpin, shooterSubsystem), new FunctionalCommand(
@@ -61,5 +70,14 @@ public class SmartTurretCommand extends SequentialCommandGroup {
     @Override
     public void execute() {
 
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        if (interrupted) {
+            new ResetMechs(m_turretSubsystem, m_hoodSubsystem, m_shooterSubsystem, m_holdSubsystem);
+        } else {
+            // Should have met end condition then.
+        }
     }
 }

@@ -6,9 +6,15 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.ResetMechs;
+import frc.robot.commands.SmartTurretCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.HoldSubsystem;
@@ -16,12 +22,6 @@ import frc.robot.subsystems.HoodSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -52,7 +52,8 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    m_driveSubsystem.setDefaultCommand(new ArcadeDrive(m_driveSubsystem, m_xbox1::getLeftY, m_xbox1::getRightX));
+    // Drive controller gets drive control
+    m_driveSubsystem.setDefaultCommand(new ArcadeDrive(m_driveSubsystem, m_xbox0::getLeftY, m_xbox0::getRightX));
 
   }
 
@@ -91,6 +92,14 @@ public class RobotContainer {
 
     // // DPad Down - Intake Down
     new POVButton(m_xbox1, 180).whenPressed(new InstantCommand(m_intakeSubsystem::setDown, m_intakeSubsystem));
+
+    // TURRET BINDINGS
+
+    // Y Button
+
+    new JoystickButton(m_xbox1, 4)
+        .whenHeld(new SmartTurretCommand(m_turretSubsystem, m_hoodSubsystem, m_shooterSubsystem, m_holdSubsystem))
+        .whenReleased(new ResetMechs(m_turretSubsystem, m_hoodSubsystem, m_shooterSubsystem, m_holdSubsystem));
 
   }
 

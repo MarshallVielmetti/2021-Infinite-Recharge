@@ -20,7 +20,7 @@ package frc.robot;
 public final class Constants {
     public static class DriveConstants {
         public static final double kMaxSpeed = 3.0; // m/s
-        public static final double kMaxAngularSpeed = 2 * Math.PI; // One roation per second
+        public static final double kMaxAngularSpeed = 2 * Math.PI; // One rotation per second
 
         public static final double kTrackWidth = 0.381 * 2; // meters
         public static final double kWheelRadius = 0.0508; // meters
