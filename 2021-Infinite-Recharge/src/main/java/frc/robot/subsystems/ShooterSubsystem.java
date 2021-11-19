@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.controller.LinearQuadraticRegulator;
 import edu.wpi.first.wpilibj.estimator.KalmanFilter;
 import edu.wpi.first.wpilibj.system.LinearSystem;
@@ -25,6 +26,8 @@ public class ShooterSubsystem extends SubsystemBase {
         private final CANEncoder m_encoder = m_motor1.getEncoder();
 
         private double m_targetSpeed;
+
+        private boolean isDriven;
 
         // The plant holds a state-space model of our flywheel. This system has the
         // following properties:
@@ -62,37 +65,55 @@ public class ShooterSubsystem extends SubsystemBase {
                         m_flywheelController, m_flywheelObserver, 12.0, 0.020);
 
         public ShooterSubsystem() {
+
+                this.isDriven = false;
+
                 m_motor1.setIdleMode(IdleMode.kCoast);
                 m_motor2.setIdleMode(IdleMode.kCoast);
-                m_motor2.follow(m_motor1);
 
+                m_motor2.follow(m_motor1, true);
+
+                // TODO - Need to verify and set all of these values
                 m_encoder.setPositionConversionFactor(2.0 * Math.PI * m_encoder.getCountsPerRevolution());
                 m_targetSpeed = 0;
         }
 
         public void smartSpin() {
+                this.isDriven = true;
                 m_loop.setNextR(VecBuilder.fill(kSpinupRadPerSec));
 
         }
 
+        /**
+         * Don't use this! Unless you need the flywheel to slow down quickly!
+         */
         public void smartStop() {
                 m_loop.setNextR(VecBuilder.fill(0));
         }
 
+        public void stop() {
+                this.isDriven = false;
+                m_motor1.setVoltage(0);
+        }
+
         @Override
         public void periodic() {
-                // Correct our Kalman filter's state vector estimate with encoder data.
-                m_loop.correct(VecBuilder.fill(m_encoder.getVelocity()));
+                // If the motors should be active, run the code.
+                // Else, just make the motors coast!
+                if (this.isDriven) {
+                        // Correct our Kalman filter's state vector estimate with encoder data.
+                        m_loop.correct(VecBuilder.fill(m_encoder.getVelocity()));
 
-                // Update our LQR to generate new voltage commands and use the voltages to
-                // predict the next
-                // state with out Kalman filter.
-                m_loop.predict(0.020);
+                        // Update our LQR to generate new voltage commands and use the voltages to
+                        // predict the next
+                        // state with out Kalman filter.
+                        m_loop.predict(0.020);
 
-                // Send the new calculated voltage to the motors.
-                // voltage = duty cycle * battery voltage, so
-                // duty cycle = voltage / battery voltage
-                double nextVoltage = m_loop.getU(0);
-                m_motor1.setVoltage(nextVoltage);
+                        // Send the new calculated voltage to the motors.
+                        // voltage = duty cycle * battery voltage, so
+                        // duty cycle = voltage / battery voltage
+                        double nextVoltage = m_loop.getU(0);
+                        m_motor1.setVoltage(nextVoltage);
+                }
         }
 }
