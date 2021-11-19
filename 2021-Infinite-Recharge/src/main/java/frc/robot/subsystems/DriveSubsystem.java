@@ -39,15 +39,15 @@ public class DriveSubsystem extends SubsystemBase {
 
     private final Gyro m_gyro = new ADXRS450_Gyro(); // TODO Make sure actually on the robot
 
-    private final PIDController m_leftPIDController = new PIDController(1, 0, 0); // TODO Assign values
-    private final PIDController m_rightPIDController = new PIDController(1, 0, 0); // TODO Assign values
+    private final PIDController m_leftPIDController = new PIDController(0.6, 0.00001, 0.003); // TODO Assign values
+    private final PIDController m_rightPIDController = new PIDController(0.6, 0.00001, 0.003); // TODO Assign values
 
     private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(kTrackWidth);
 
     private DifferentialDriveOdometry m_odometry;
 
     // Gains are for example purposes only - must be determined for your own robot!
-    private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(1, 3);
+    private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(0, 3);
 
     /**
      * Constructs a differential drive object. Sets the encoder distance per pulse
@@ -62,7 +62,15 @@ public class DriveSubsystem extends SubsystemBase {
         m_rightMotorGroup.setInverted(kRightMotorInverted);
         m_leftMotorGroup.setInverted(kLeftMotorInverted);
 
+        m_motorL2.follow(m_motorL1);
+        m_motorL3.follow(m_motorL1);
+
+        m_motorR2.follow(m_motorR1);
+        m_motorR3.follow(m_motorR1);
+
         // TODO Not sure if this works
+        // NEED to set these valus for this drive system to work correctly!
+        // Could potentially be causing the encoder errors??
         m_leftEncoder.setPositionConversionFactor(kPositionFactor);
         m_rightEncoder.setPositionConversionFactor(kPositionFactor);
 
@@ -88,8 +96,8 @@ public class DriveSubsystem extends SubsystemBase {
                 speeds.leftMetersPerSecond);
         final double rightOutput = m_rightPIDController.calculate(m_rightEncoder.getVelocity(),
                 speeds.rightMetersPerSecond);
-        this.m_leftMotorGroup.setVoltage(leftOutput + leftFeedforward);
-        this.m_rightMotorGroup.setVoltage(rightOutput + rightFeedforward);
+        this.m_motorL1.setVoltage(leftOutput + leftFeedforward);
+        this.m_motorR1.setVoltage(rightOutput + rightFeedforward);
     }
 
     /**

@@ -19,8 +19,10 @@ import edu.wpi.first.wpiutil.math.numbers.N1;
 import static frc.robot.Constants.ShooterConstants.*;
 
 public class ShooterSubsystem extends SubsystemBase {
-        private final CANSparkMax m_motor = new CANSparkMax(kFlywheelMotorID, MotorType.kBrushless);
-        private final CANEncoder m_encoder = m_motor.getEncoder();
+        private final CANSparkMax m_motor1 = new CANSparkMax(kFlywheelMotor1ID, MotorType.kBrushless);
+        private final CANSparkMax m_motor2 = new CANSparkMax(kFlywheelMotor1ID, MotorType.kBrushless);
+
+        private final CANEncoder m_encoder = m_motor1.getEncoder();
 
         private double m_targetSpeed;
 
@@ -60,7 +62,10 @@ public class ShooterSubsystem extends SubsystemBase {
                         m_flywheelController, m_flywheelObserver, 12.0, 0.020);
 
         public ShooterSubsystem() {
-                m_motor.setIdleMode(IdleMode.kCoast);
+                m_motor1.setIdleMode(IdleMode.kCoast);
+                m_motor2.setIdleMode(IdleMode.kCoast);
+                m_motor2.follow(m_motor1);
+
                 m_encoder.setPositionConversionFactor(2.0 * Math.PI * m_encoder.getCountsPerRevolution());
                 m_targetSpeed = 0;
         }
@@ -88,6 +93,6 @@ public class ShooterSubsystem extends SubsystemBase {
                 // voltage = duty cycle * battery voltage, so
                 // duty cycle = voltage / battery voltage
                 double nextVoltage = m_loop.getU(0);
-                m_motor.setVoltage(nextVoltage);
+                m_motor1.setVoltage(nextVoltage);
         }
 }

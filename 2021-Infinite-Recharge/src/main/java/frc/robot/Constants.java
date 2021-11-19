@@ -39,8 +39,8 @@ public final class Constants {
 
         public static final boolean kRightMotorInverted = false;
 
-        // TODO - Figure out what this does
-        // This doesn't make sense. We *need* shaft encoders.
+        // This needs to be the distance of movement provided by one motor rotation
+        // Not the wheel circumference!
         public static final double kPositionFactor = kWheelCircumference;
         public static final double kVelocityFactor = kWheelCircumference;
 
@@ -67,7 +67,8 @@ public final class Constants {
 
     public static class ShooterConstants {
 
-        public static final int kFlywheelMotorID = 31;
+        public static final int kFlywheelMotor1ID = 24;
+        public static final int kFlywheelMotor2ID = 24;
 
         public static final double kFlywheelMomentofIntertia = 0.00032; // kg / m^2
         // Reduction between motors and encoder, as output over input. If the flywheel
