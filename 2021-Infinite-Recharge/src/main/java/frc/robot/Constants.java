@@ -47,7 +47,7 @@ public final class Constants {
     }
 
     public static class HoldConstants {
-        public static final int kHoldMotorID = 33;
+        public static final int kHoldMotorID = 22;
 
         public static final boolean kHoldMotorInverted = false;
 
@@ -68,7 +68,7 @@ public final class Constants {
     public static class ShooterConstants {
 
         public static final int kFlywheelMotor1ID = 24;
-        public static final int kFlywheelMotor2ID = 24;
+        public static final int kFlywheelMotor2ID = 25;
 
         public static final double kFlywheelMomentofIntertia = 0.00032; // kg / m^2
         // Reduction between motors and encoder, as output over input. If the flywheel
@@ -94,11 +94,20 @@ public final class Constants {
     }
 
     public static class TurretConstants {
-        public static final int kTurretMotorID = 34;
+        public static final int kTurretMotorID = 27;
         // TODO PID constants for the turret
         public static final double kTurretKp = 0.1;
         public static final double kTurretKi = 0.0001;
         public static final double kTurretKd = 0.002;
+        public static final double kTurretKIz = 0;
+        public static final double kTurretKff = 0;
+        public static final double kMaxOutput = 0.2;
+        public static final double kMinOutput = -0.2;
+        public static final double kMaxRPM = 5700; // RPM
+        public static final double kMaxVel = 2000; // RPM
+        public static final double kMinVel = 200;
+        public static final double kMaxAcc = 1500; // RPM
+        public static final double kAllowedErr = 0.02;
 
         public static final int kTurretEncoderMax = 1000;
         public static final int kTurretEncoderMin = -1000;
@@ -123,7 +132,7 @@ public final class Constants {
 
     public static class HoodConstants {
 
-        public static final int kHoodMotorID = 32;
+        public static final int kHoodMotorID = 26;
 
         // TODO Find good values
         public static final double kHoodKp = 5e-5;
