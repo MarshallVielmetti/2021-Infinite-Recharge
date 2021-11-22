@@ -97,6 +97,9 @@ public class RobotContainer {
 
     // Y Button
 
+    new JoystickButton(m_xbox1, 4)
+        .whenHeld(new InstantCommand(() -> m_shooterSubsystem.smartSpin(), m_shooterSubsystem));
+
     // new JoystickButton(m_xbox1, 4)
     // .whenHeld(new SmartTurretCommand(m_turretSubsystem, m_hoodSubsystem,
     // m_shooterSubsystem, m_holdSubsystem))

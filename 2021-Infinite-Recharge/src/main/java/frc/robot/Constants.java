@@ -96,14 +96,15 @@ public final class Constants {
     public static class TurretConstants {
         public static final int kTurretMotorID = 27;
         // TODO PID constants for the turret
-        public static final double kTurretKp = 0.1;
-        public static final double kTurretKi = 0.0001;
-        public static final double kTurretKd = 0.002;
-        public static final double kTurretKIz = 0;
-        public static final double kTurretKff = 0;
+        public static final double kP = 0.1;
+        public static final double kI = 0.0001;
+        public static final double kD = 0.002;
+        public static final double kIz = 0;
+        public static final double kFF = 0;
         public static final double kMaxOutput = 0.2;
         public static final double kMinOutput = -0.2;
-        public static final double kMaxRPM = 5700; // RPM
+        public static final double kmaxRPM = 5700; // RPM
+
         public static final double kMaxVel = 2000; // RPM
         public static final double kMinVel = 200;
         public static final double kMaxAcc = 1500; // RPM
@@ -135,14 +136,15 @@ public final class Constants {
         public static final int kHoodMotorID = 26;
 
         // TODO Find good values
-        public static final double kHoodKp = 5e-5;
-        public static final double kHoodKi = 1e-6;
-        public static final double kHoodKd = 0;
-        public static final double kHoodkIz = 0;
-        public static final double kHoodKff = 0.002;
-        public static final double kMaxOutput = 0.4;
-        public static final double kMinOutput = -0.4;
-        public static final double kMaxRPM = 5700; // RPM
+        public static final double kP = 0.1;
+        public static final double kI = 0.0001;
+        public static final double kD = 0.002;
+        public static final double kIz = 0;
+        public static final double kFF = 0.0;
+        public static final double kMaxOutput = 0.1;
+        public static final double kMinOutput = -0.1;
+        public static final double kMaxRPM = 150; // RPM
+
         public static final double kMaxVel = 2000; // RPM
         public static final double kMinVel = 200;
         public static final double kMaxAcc = 1500; // RPM

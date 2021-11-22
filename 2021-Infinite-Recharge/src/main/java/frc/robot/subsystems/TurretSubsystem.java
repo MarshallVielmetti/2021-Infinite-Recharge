@@ -26,11 +26,11 @@ public class TurretSubsystem extends SubsystemBase {
             this.initDebug();
         }
 
-        m_pidController.setP(kTurretKp);
-        m_pidController.setI(kTurretKi);
-        m_pidController.setD(kTurretKd);
-        m_pidController.setIZone(kTurretKIz);
-        m_pidController.setFF(kTurretKff);
+        m_pidController.setP(kP);
+        m_pidController.setI(kI);
+        m_pidController.setD(kD);
+        m_pidController.setIZone(kIz);
+        m_pidController.setFF(kFF);
         m_pidController.setOutputRange(kMinOutput, kMaxOutput);
 
         /**

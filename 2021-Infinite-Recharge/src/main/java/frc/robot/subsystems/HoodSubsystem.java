@@ -23,16 +23,26 @@ public class HoodSubsystem extends SubsystemBase {
     private final boolean debug = true;
     private double debugSetpos = 0;
 
+    // If NOt in debug - comment this out
+    private double kP = 5e-5;
+    private double kI = 1e-6;
+    private double kD = 0.00002;
+    private double kIz = 0;
+    private double kFF = 0.000156;
+    private double kMaxOutput = 0.1;
+    private double kMinOutput = -0.1;
+    private double kMaxRPM = 5700;
+
     public HoodSubsystem() {
         if (this.debug) {
             this.initDebug();
         }
 
-        m_pidController.setP(kHoodKp);
-        m_pidController.setI(kHoodKi);
-        m_pidController.setD(kHoodKd);
-        m_pidController.setIZone(kHoodkIz);
-        m_pidController.setFF(kHoodKff);
+        m_pidController.setP(kP);
+        m_pidController.setI(kI);
+        m_pidController.setD(kD);
+        m_pidController.setIZone(kIz);
+        m_pidController.setFF(kFF);
         m_pidController.setOutputRange(kMinOutput, kMaxOutput);
 
         /**
@@ -60,6 +70,7 @@ public class HoodSubsystem extends SubsystemBase {
         if (this.debug) {
             this.doDebug();
         }
+        verifyPosition();
 
     }
 
@@ -73,20 +84,72 @@ public class HoodSubsystem extends SubsystemBase {
         m_pidController.setReference(position, ControlType.kPosition);
     }
 
+    public void verifyPosition() {
+        if (m_encoder.getPosition() <= -1) {
+            setDesiredPosition(-5);
+        }
+    }
+
     private void initDebug() {
         SmartDashboard.putNumber("Hood Position", m_encoder.getPosition());
         SmartDashboard.putNumber("Hood Set Position", 0);
+
+        // display PID coefficients on SmartDashboard
+        SmartDashboard.putNumber("P Gain", kP);
+        SmartDashboard.putNumber("I Gain", kI);
+        SmartDashboard.putNumber("D Gain", kD);
+        SmartDashboard.putNumber("I Zone", kIz);
+        SmartDashboard.putNumber("Feed Forward", kFF);
+        SmartDashboard.putNumber("Max Output", kMaxOutput);
+        SmartDashboard.putNumber("Min Output", kMinOutput);
     }
 
     private void doDebug() {
         double setPos = SmartDashboard.getNumber("Hood Set Position", 0);
         if (setPos != debugSetpos) {
-            this.debugSetpos = setPos;
-            System.out.println(debugSetpos);
+            if (debugSetpos > 0)
+                this.debugSetpos = setPos;
+            else
+                this.debugSetpos = 0;
             this.setDesiredPosition(debugSetpos);
         }
 
         SmartDashboard.putNumber("Hood Position", m_encoder.getPosition());
+
+        // read PID coefficients from SmartDashboard
+        double p = SmartDashboard.getNumber("P Gain", 0);
+        double i = SmartDashboard.getNumber("I Gain", 0);
+        double d = SmartDashboard.getNumber("D Gain", 0);
+        double iz = SmartDashboard.getNumber("I Zone", 0);
+        double ff = SmartDashboard.getNumber("Feed Forward", 0);
+        double max = SmartDashboard.getNumber("Max Output", 0);
+        double min = SmartDashboard.getNumber("Min Output", 0);
+
+        if ((p != kP)) {
+            m_pidController.setP(p);
+            kP = p;
+        }
+        if ((i != kI)) {
+            m_pidController.setI(i);
+            kI = i;
+        }
+        if ((d != kD)) {
+            m_pidController.setD(d);
+            kD = d;
+        }
+        if ((iz != kIz)) {
+            m_pidController.setIZone(iz);
+            kIz = iz;
+        }
+        if ((ff != kFF)) {
+            m_pidController.setFF(ff);
+            kFF = ff;
+        }
+        if ((max != kMaxOutput) || (min != kMinOutput)) {
+            m_pidController.setOutputRange(min, max);
+            kMinOutput = min;
+            kMaxOutput = max;
+        }
 
     }
 
