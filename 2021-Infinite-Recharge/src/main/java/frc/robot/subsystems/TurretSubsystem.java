@@ -1,77 +1,83 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import static frc.robot.Constants.TurretConstants.*;
 
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import com.revrobotics.CANEncoder;
+import com.revrobotics.CANPIDController;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.ControlType;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-/**
- * interface with "enable", "disable", and "setgoal" Should make default command
- * to just maintain position
- */
-public class TurretSubsystem extends ProfiledPIDSubsystem {
+public class TurretSubsystem extends SubsystemBase {
 
-    private final TalonSRX m_turretMotor = new TalonSRX(kTurretMotorID);
-    private final Encoder m_turretEncoder = new Encoder(kEncoderPorts[0], kEncoderPorts[1]);
-
-    private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(kTurretKs, kTurretKv, kTurretKa);
+    private final CANSparkMax m_motor = new CANSparkMax(kTurretMotorID, MotorType.kBrushless);
+    private final CANEncoder m_encoder = m_motor.getEncoder();
+    private final CANPIDController m_pidController = m_motor.getPIDController();
 
     private final boolean debug = true;
     private double debugSetpos = 0;
 
     public TurretSubsystem() {
-        super(new ProfiledPIDController(kTurretKp, kTurretKi, kTurretKd,
-                new TrapezoidProfile.Constraints(kTurretVMax, kTurretAMax), 0.02));
 
-        // This encoderDistancePerPulse should be in fractions of radians per pulse of
-        // quad encoder
-        m_turretEncoder.setDistancePerPulse(kEncoderDistancePerPulse);
-        if (debug) {
+        if (this.debug) {
             this.initDebug();
         }
+
+        m_pidController.setP(kTurretKp);
+        m_pidController.setI(kTurretKi);
+        m_pidController.setD(kTurretKd);
+        m_pidController.setIZone(kTurretKIz);
+        m_pidController.setFF(kTurretKff);
+        m_pidController.setOutputRange(kMinOutput, kMaxOutput);
+
+        /**
+         * Smart Motion coefficients are set on a CANPIDController object
+         * 
+         * - setSmartMotionMaxVelocity() will limit the velocity in RPM of the pid
+         * controller in Smart Motion mode - setSmartMotionMinOutputVelocity() will put
+         * a lower bound in RPM of the pid controller in Smart Motion mode -
+         * setSmartMotionMaxAccel() will limit the acceleration in RPM^2 of the pid
+         * controller in Smart Motion mode - setSmartMotionAllowedClosedLoopError() will
+         * set the max allowed error for the pid controller in Smart Motion mode
+         */
+        int smartMotionSlot = 0;
+        m_pidController.setSmartMotionMaxVelocity(kMaxVel, smartMotionSlot);
+        m_pidController.setSmartMotionMinOutputVelocity(kMinVel, smartMotionSlot);
+        m_pidController.setSmartMotionMaxAccel(kMaxAcc, smartMotionSlot);
+        m_pidController.setSmartMotionAllowedClosedLoopError(kAllowedErr, smartMotionSlot);
     }
 
-    // TODO
-    /**
-     * Returns the current measurement of the process variable Returns the sensor
-     * reading to be used as the process variable
-     */
-    public double getMeasurement() {
-        return m_turretEncoder.getDistance();
+    public void setDesiredPosition(double position) {
+        m_pidController.setReference(position, ControlType.kPosition);
     }
 
-    protected void useOutput(double output, TrapezoidProfile.State setpoint) {
-        // Calculate the feedforward from the setpoint
-        double feedforward = m_feedforward.calculate(setpoint.position, setpoint.velocity);
-        // Add the feedforward to the PID output to get the motor output
-        m_turretMotor.set(ControlMode.Current, output + feedforward);
-    }
-
-    public void setVisionGoal(double tx) {
-
-    }
-
-    public void doDebug() {
-        double setPos = SmartDashboard.getNumber("Turret Set Position", 0);
-        if (setPos != debugSetpos)
-            setTarget(setPos);
-    }
-
-    public void initDebug() {
-        SmartDashboard.putNumber("Turret Position", getMeasurement());
+    private void initDebug() {
+        SmartDashboard.putNumber("Turret Position", m_encoder.getPosition());
         SmartDashboard.putNumber("Turret Set Position", 0);
     }
 
-    public void setTarget(double target) {
-        if (target < kTurretEncoderMax && target > kTurretEncoderMin) {
-            m_controller.setGoal(target);
+    @Override
+    public void periodic() {
+        // Check if hitting limit switch? and if so zero and make sure moving in the
+        // opposite direction?
+        if (this.debug) {
+            this.doDebug();
         }
+    }
+
+    private void doDebug() {
+        double setPos = SmartDashboard.getNumber("Turret Set Position", 0);
+        if (setPos != debugSetpos) {
+            this.debugSetpos = setPos;
+            System.out.println(debugSetpos);
+            this.setDesiredPosition(debugSetpos);
+        }
+
+        SmartDashboard.putNumber("Turret Position", m_encoder.getPosition());
+
     }
 
 }
