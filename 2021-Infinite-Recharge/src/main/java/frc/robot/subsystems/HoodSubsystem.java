@@ -54,11 +54,13 @@ public class HoodSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+
         // Check if hitting limit switch? and if so zero and make sure moving in the
         // opposite direction?
         if (this.debug) {
             this.doDebug();
         }
+
     }
 
     public void zero() {
@@ -78,8 +80,14 @@ public class HoodSubsystem extends SubsystemBase {
 
     private void doDebug() {
         double setPos = SmartDashboard.getNumber("Hood Set Position", 0);
-        if (setPos != debugSetpos)
-            this.setDesiredPosition(setPos);
+        if (setPos != debugSetpos) {
+            this.debugSetpos = setPos;
+            System.out.println(debugSetpos);
+            this.setDesiredPosition(debugSetpos);
+        }
+
+        SmartDashboard.putNumber("Hood Position", m_encoder.getPosition());
+
     }
 
 }
