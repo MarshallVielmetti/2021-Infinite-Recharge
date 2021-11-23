@@ -22,8 +22,8 @@ public class HoldSubsystem extends SubsystemBase {
   }
 
   /**
-   * Realized that I probably don't need a complex control system for this either At some point
-   * maybe make it pulse but why
+   * Realized that I probably don't need a complex control system for this either
+   * At some point maybe make it pulse but why
    *
    * @param percentPower between -1 and 1
    */
@@ -31,6 +31,9 @@ public class HoldSubsystem extends SubsystemBase {
     m_holdMotor.set(percentPower);
   }
 
+  /**
+   * Should eventually make this much better Pulse when jamming etc.
+   */
   public void defaultHold() {
     this.setHoldSpeed(kDefaultHoldPower);
   }

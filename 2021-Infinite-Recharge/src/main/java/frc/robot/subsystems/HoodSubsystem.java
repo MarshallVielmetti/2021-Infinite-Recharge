@@ -48,11 +48,13 @@ public class HoodSubsystem extends SubsystemBase {
     /**
      * Smart Motion coefficients are set on a CANPIDController object
      *
-     * <p>- setSmartMotionMaxVelocity() will limit the velocity in RPM of the pid controller in
-     * Smart Motion mode - setSmartMotionMinOutputVelocity() will put a lower bound in RPM of the
-     * pid controller in Smart Motion mode - setSmartMotionMaxAccel() will limit the acceleration in
-     * RPM^2 of the pid controller in Smart Motion mode - setSmartMotionAllowedClosedLoopError()
-     * will set the max allowed error for the pid controller in Smart Motion mode
+     * <p>
+     * - setSmartMotionMaxVelocity() will limit the velocity in RPM of the pid
+     * controller in Smart Motion mode - setSmartMotionMinOutputVelocity() will put
+     * a lower bound in RPM of the pid controller in Smart Motion mode -
+     * setSmartMotionMaxAccel() will limit the acceleration in RPM^2 of the pid
+     * controller in Smart Motion mode - setSmartMotionAllowedClosedLoopError() will
+     * set the max allowed error for the pid controller in Smart Motion mode
      */
     int smartMotionSlot = 0;
     m_pidController.setSmartMotionMaxVelocity(kMaxVel, smartMotionSlot);
@@ -105,8 +107,10 @@ public class HoodSubsystem extends SubsystemBase {
   private void doDebug() {
     double setPos = SmartDashboard.getNumber("Hood Set Position", 0);
     if (setPos != debugSetpos) {
-      if (debugSetpos > 0) this.debugSetpos = setPos;
-      else this.debugSetpos = 0;
+      if (debugSetpos > 0)
+        this.debugSetpos = setPos;
+      else
+        this.debugSetpos = 0;
       this.setDesiredPosition(debugSetpos);
     }
 
@@ -146,5 +150,9 @@ public class HoodSubsystem extends SubsystemBase {
       kMinOutput = min;
       kMaxOutput = max;
     }
+  }
+
+  public boolean isAtPosition() {
+    return false; // TODO
   }
 }

@@ -1,65 +1,53 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.PIDSubsystem;
+
 import static frc.robot.Constants.TurretConstants.*;
 
 import com.revrobotics.CANEncoder;
-import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.ControlType;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+public class TurretSubsystem extends PIDSubsystem {
 
-public class TurretSubsystem extends SubsystemBase {
+  private final Limelight m_limelight = Limelight.getInstance();
 
   private final CANSparkMax m_motor = new CANSparkMax(kTurretMotorID, MotorType.kBrushless);
+
   private final CANEncoder m_encoder = m_motor.getEncoder();
-  private final CANPIDController m_pidController = m_motor.getPIDController();
+  private SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(kS, kV);
 
   private final boolean debug = true;
   private double setPos = 0;
 
   public TurretSubsystem() {
+    super(new PIDController(kP, kI, kD));
 
     if (this.debug) {
       this.initDebug();
     }
 
-    m_pidController.setP(kP);
-    m_pidController.setI(kI);
-    m_pidController.setD(kD);
-    m_pidController.setIZone(kIz);
-    m_pidController.setFF(kFF);
-    m_pidController.setOutputRange(kMinOutput, kMaxOutput);
-
-    /**
-     * Smart Motion coefficients are set on a CANPIDController object
-     *
-     * <p>- setSmartMotionMaxVelocity() will limit the velocity in RPM of the pid controller in
-     * Smart Motion mode - setSmartMotionMinOutputVelocity() will put a lower bound in RPM of the
-     * pid controller in Smart Motion mode - setSmartMotionMaxAccel() will limit the acceleration in
-     * RPM^2 of the pid controller in Smart Motion mode - setSmartMotionAllowedClosedLoopError()
-     * will set the max allowed error for the pid controller in Smart Motion mode
-     */
-    int smartMotionSlot = 0;
-    m_pidController.setSmartMotionMaxVelocity(kMaxVel, smartMotionSlot);
-    m_pidController.setSmartMotionMinOutputVelocity(kMinVel, smartMotionSlot);
-    m_pidController.setSmartMotionMaxAccel(kMaxAcc, smartMotionSlot);
-    m_pidController.setSmartMotionAllowedClosedLoopError(kAllowedErr, smartMotionSlot);
+    getController().setTolerance(kTurretVisionXTolerance);
+    setSetpoint(0); // Want it always pointed right at the turret
   }
 
-  public void setDesiredPosition(double position) {
-    m_pidController.setReference(position, ControlType.kPosition);
+  public boolean atSetpoint() {
+    return m_controller.atSetpoint();
   }
 
-  public void incrementSetpos(double pixels) {
-    this.setDesiredPosition(this.setPos + pixels * kPixelScalar);
+  @Override
+  protected void useOutput(double output, double setpoint) {
+    // TODO Auto-generated method stub
+    m_motor.setVoltage(output + m_feedforward.calculate(setpoint));
   }
 
-  private void initDebug() {
-    SmartDashboard.putNumber("Turret Position", m_encoder.getPosition());
-    SmartDashboard.putNumber("Turret Set Position", 0);
+  @Override
+  protected double getMeasurement() {
+    // TODO Auto-generated method stub
+    return m_limelight.getX();
   }
 
   @Override
@@ -71,17 +59,50 @@ public class TurretSubsystem extends SubsystemBase {
     }
   }
 
-  public void zero() {
-    // TODO move until limit switch
+  /** Initializes debug mode */
+  private void initDebug() {
+    SmartDashboard.putNumber("Turret X", getMeasurement());
+    SmartDashboard.putNumber("Turret Encoder", m_encoder.getPosition());
+
+    SmartDashboard.putNumber("Turret P", kP);
+    SmartDashboard.putNumber("Turret I", kI);
+    SmartDashboard.putNumber("Turret D", kD);
+    SmartDashboard.putNumber("Turret FFS", kS);
+    SmartDashboard.putNumber("Turret FFV", kV);
   }
 
+  /**
+   * Puts the X measurement from the limelight on the dashboard Not a lot to do in
+   * the debug loop here TODO Add PID tuning ability
+   */
   private void doDebug() {
-    double setPos = SmartDashboard.getNumber("Turret Set Position", 0);
-    if (setPos != this.setPos) {
-      this.setPos = setPos;
-      this.setDesiredPosition(this.setPos);
-    }
+    SmartDashboard.putNumber("Turret X", getMeasurement());
+    SmartDashboard.putNumber("Turret Encoder", m_encoder.getPosition());
 
-    SmartDashboard.putNumber("Turret Position", m_encoder.getPosition());
+    double p = SmartDashboard.getNumber("Turret P", kP);
+    double i = SmartDashboard.getNumber("Turret I", kI);
+    double d = SmartDashboard.getNumber("Turret D", kD);
+    double s = SmartDashboard.getNumber("Turret FFS", kS);
+    double v = SmartDashboard.getNumber("Turret FFV", kV);
+
+    PIDController controller = getController();
+
+    if (p != kP) {
+      controller.setP(p);
+      kP = p;
+    }
+    if (i != kI) {
+      controller.setI(i);
+      kI = i;
+    }
+    if (d != kD) {
+      controller.setD(d);
+      kD = d;
+    }
+    if (s != kS || v != kV) {
+      this.m_feedforward = new SimpleMotorFeedforward(s, v);
+      kS = s;
+      kV = v;
+    }
   }
 }
