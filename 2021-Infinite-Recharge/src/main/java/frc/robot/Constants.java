@@ -96,9 +96,10 @@ public final class Constants {
     public static class TurretConstants {
         public static final int kTurretMotorID = 27;
         // TODO PID constants for the turret
-        public static final double kP = 0.1;
-        public static final double kI = 0.0001;
-        public static final double kD = 0.002;
+        public static double kP = 0.1;
+        public static double kI = 0.0001;
+        public static double kD = 0.002;
+
         public static final double kIz = 0;
         public static final double kFF = 0;
         public static final double kMaxOutput = 0.2;
@@ -114,9 +115,8 @@ public final class Constants {
         public static final int kTurretEncoderMin = -1000;
 
         // TODO - For the motor feedforward
-        public static final double kTurretKs = 2;
-        public static final double kTurretKv = 1;
-        public static final double kTurretKa = 0.5;
+        public static double kS = 2;
+        public static double kV = 1;
 
         public static final double kTurretVMax = 0.2; // Angular velocity, rad/s
         public static final double kTurretAMax = 0.05; // Angular acceleartion rad/s^2
@@ -129,6 +129,8 @@ public final class Constants {
 
         public static final double kTurretPIDTolerance = 0.5; // TODO
         public static final double kTurretVisionXTolerance = 15; // Pixels?
+
+        public static final double kPixelScalar = 0.001;
     }
 
     public static class HoodConstants {

@@ -18,7 +18,7 @@ public class TurretSubsystem extends SubsystemBase {
     private final CANPIDController m_pidController = m_motor.getPIDController();
 
     private final boolean debug = true;
-    private double debugSetpos = 0;
+    private double setPos = 0;
 
     public TurretSubsystem() {
 
@@ -54,6 +54,10 @@ public class TurretSubsystem extends SubsystemBase {
         m_pidController.setReference(position, ControlType.kPosition);
     }
 
+    public void incrementSetpos(double pixels) {
+        this.setDesiredPosition(this.setPos + pixels * kPixelScalar);
+    }
+
     private void initDebug() {
         SmartDashboard.putNumber("Turret Position", m_encoder.getPosition());
         SmartDashboard.putNumber("Turret Set Position", 0);
@@ -68,16 +72,18 @@ public class TurretSubsystem extends SubsystemBase {
         }
     }
 
+    public void zero() {
+        // TODO move until limit switch
+    }
+
     private void doDebug() {
         double setPos = SmartDashboard.getNumber("Turret Set Position", 0);
-        if (setPos != debugSetpos) {
-            this.debugSetpos = setPos;
-            System.out.println(debugSetpos);
-            this.setDesiredPosition(debugSetpos);
+        if (setPos != this.setPos) {
+            this.setPos = setPos;
+            this.setDesiredPosition(this.setPos);
         }
 
         SmartDashboard.putNumber("Turret Position", m_encoder.getPosition());
-
     }
 
 }
