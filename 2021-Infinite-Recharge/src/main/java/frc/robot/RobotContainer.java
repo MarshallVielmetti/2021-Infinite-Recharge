@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.ExampleCommand;
 // import frc.robot.commands.ResetMechs;
-import frc.robot.commands.SmartTurretCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.HoldSubsystem;
@@ -24,11 +23,10 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 
 /**
- * This class is where the bulk of the robot should be declared. Since
- * Command-based is a "declarative" paradigm, very little robot logic should
- * actually be handled in the {@link Robot} periodic methods (other than the
- * scheduler calls). Instead, the structure of the robot (including subsystems,
- * commands, and button mappings) should be declared here.
+ * This class is where the bulk of the robot should be declared. Since Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
@@ -45,23 +43,21 @@ public class RobotContainer {
   private final CustomXBox m_xbox0 = new CustomXBox(0);
   private final CustomXBox m_xbox1 = new CustomXBox(1);
 
-  /**
-   * The container for the robot. Contains subsystems, OI devices, and commands.
-   */
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
 
     // Drive controller gets drive control
-    m_driveSubsystem.setDefaultCommand(new ArcadeDrive(m_driveSubsystem, m_xbox0::getLeftY, m_xbox0::getRightX));
-
+    m_driveSubsystem.setDefaultCommand(
+        new ArcadeDrive(m_driveSubsystem, m_xbox0::getLeftY, m_xbox0::getRightX));
   }
 
   /**
-   * Use this method to define your button->command mappings. Buttons can be
-   * created by instantiating a {@link GenericHID} or one of its subclasses
-   * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
-   * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   * Use this method to define your button->command mappings. Buttons can be created by
+   * instantiating a {@link GenericHID} or one of its subclasses ({@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
 
@@ -70,28 +66,41 @@ public class RobotContainer {
     // INTAKE BINDINGS
 
     // A Button - Run Intake & Spin Hold
-    new JoystickButton(m_xbox1, 1).whenHeld(new StartEndCommand(() -> {
-      m_intakeSubsystem.setDown(); // Make sure extended
-      m_intakeSubsystem.defaultIntake();
-      m_holdSubsystem.defaultHold();
-    }, () -> {
-      m_holdSubsystem.stop();
-      m_intakeSubsystem.stop();
-    }, m_intakeSubsystem, m_holdSubsystem));
+    new JoystickButton(m_xbox1, 1)
+        .whenHeld(
+            new StartEndCommand(
+                () -> {
+                  m_intakeSubsystem.setDown(); // Make sure extended
+                  m_intakeSubsystem.defaultIntake();
+                  m_holdSubsystem.defaultHold();
+                },
+                () -> {
+                  m_holdSubsystem.stop();
+                  m_intakeSubsystem.stop();
+                },
+                m_intakeSubsystem,
+                m_holdSubsystem));
 
     // // X Button - Exhaust Intake
-    new JoystickButton(m_xbox1, 3).whenHeld(new StartEndCommand(() -> {
-      m_intakeSubsystem.setDown();
-      m_intakeSubsystem.defaultExhaust();
-    }, () -> {
-      m_intakeSubsystem.stop();
-    }, m_intakeSubsystem));
+    new JoystickButton(m_xbox1, 3)
+        .whenHeld(
+            new StartEndCommand(
+                () -> {
+                  m_intakeSubsystem.setDown();
+                  m_intakeSubsystem.defaultExhaust();
+                },
+                () -> {
+                  m_intakeSubsystem.stop();
+                },
+                m_intakeSubsystem));
 
     // // DPad Up - Intake Up
-    new POVButton(m_xbox1, 0).whenPressed(new InstantCommand(m_intakeSubsystem::setUp, m_intakeSubsystem));
+    new POVButton(m_xbox1, 0)
+        .whenPressed(new InstantCommand(m_intakeSubsystem::setUp, m_intakeSubsystem));
 
     // // DPad Down - Intake Down
-    new POVButton(m_xbox1, 180).whenPressed(new InstantCommand(m_intakeSubsystem::setDown, m_intakeSubsystem));
+    new POVButton(m_xbox1, 180)
+        .whenPressed(new InstantCommand(m_intakeSubsystem::setDown, m_intakeSubsystem));
 
     // TURRET BINDINGS
 
@@ -117,5 +126,4 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     return m_autoCommand;
   }
-
 }
