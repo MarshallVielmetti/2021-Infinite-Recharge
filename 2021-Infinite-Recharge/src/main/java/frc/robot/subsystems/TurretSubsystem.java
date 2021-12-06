@@ -81,8 +81,8 @@ public class TurretSubsystem extends PIDSubsystem {
   }
 
   /**
-   * Puts the X measurement from the limelight on the dashboard Not a lot to do in
-   * the debug loop here TODO Add PID tuning ability
+   * Puts the X measurement from the limelight on the dashboard Not a lot to do in the debug loop
+   * here TODO Add PID tuning ability
    */
   private void doDebug() {
     SmartDashboard.putNumber("Turret X", getMeasurement());
