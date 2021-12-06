@@ -12,41 +12,17 @@ public class CustomXBox extends XboxController {
 
   public double getLeftX() {
     return super.getX(Hand.kLeft);
-    // double val = super.getX(Hand.kLeft);
-    // if (Math.abs(val) < minJoystickValue) {
-    // return val;
-    // } else {
-    // return 0;
-    // }
   }
 
   public double getRightX() {
     return super.getX(Hand.kRight);
-    // double val = super.getX(Hand.kRight);
-    // if (Math.abs(val) < minJoystickValue) {
-    // return val;
-    // } else {
-    // return 0;
-    // }
   }
 
   public double getLeftY() {
     return super.getY(Hand.kLeft);
-    // double val = super.getY(Hand.kLeft);
-    // if (Math.abs(val) < minJoystickValue) {
-    // return val;
-    // } else {
-    // return 0;
-    // }
   }
 
   public double getRightY() {
     return super.getY(Hand.kRight);
-    // double val = super.getY(Hand.kRight);
-    // if (Math.abs(val) < minJoystickValue) {
-    // return val;
-    // } else {
-    // return 0;
-    // }
   }
 }

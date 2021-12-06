@@ -30,8 +30,11 @@ public class TurretSubsystem extends PIDSubsystem {
       this.initDebug();
     }
 
+    m_motor.setInverted(true);
+
     getController().setTolerance(kTurretVisionXTolerance);
     setSetpoint(0); // Want it always pointed right at the turret
+    enable();
   }
 
   public boolean atSetpoint() {
@@ -41,7 +44,9 @@ public class TurretSubsystem extends PIDSubsystem {
   @Override
   protected void useOutput(double output, double setpoint) {
     // TODO Auto-generated method stub
-    m_motor.setVoltage(output + m_feedforward.calculate(setpoint));
+    SmartDashboard.putNumber("Turret Out", output + m_feedforward.calculate(setpoint));
+    SmartDashboard.putNumber("Made Motor Call", SmartDashboard.getNumber("Made Motor Call", 0) + 1);
+    m_motor.setVoltage(output);
   }
 
   @Override
@@ -52,6 +57,7 @@ public class TurretSubsystem extends PIDSubsystem {
 
   @Override
   public void periodic() {
+    super.periodic();
     // Check if hitting limit switch? and if so zero and make sure moving in the
     // opposite direction?
     if (this.debug) {
@@ -61,6 +67,9 @@ public class TurretSubsystem extends PIDSubsystem {
 
   /** Initializes debug mode */
   private void initDebug() {
+
+    SmartDashboard.putNumber("Turret Out", 0);
+    SmartDashboard.putNumber("Made Motor Call", 0);
     SmartDashboard.putNumber("Turret X", getMeasurement());
     SmartDashboard.putNumber("Turret Encoder", m_encoder.getPosition());
 

@@ -32,7 +32,9 @@ public class SmartFeed extends CommandBase {
 
     @Override
     public void execute() {
-        if (m_turret.atSetpoint() && m_shooter.getIsAtSpeed() && m_hood.isAtPosition())
+        // if (m_turret.atSetpoint() && m_shooter.getIsAtSpeed() &&
+        // m_hood.isAtPosition())
+
     }
 
     @Override

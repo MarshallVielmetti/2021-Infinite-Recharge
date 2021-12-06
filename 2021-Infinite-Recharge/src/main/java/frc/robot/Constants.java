@@ -93,9 +93,9 @@ public final class Constants {
   public static class TurretConstants {
     public static final int kTurretMotorID = 27;
     // TODO PID constants for the turret
-    public static double kP = 0.1;
-    public static double kI = 0.0001;
-    public static double kD = 0.002;
+    public static double kP = 0.3;
+    public static double kI = 0.0;
+    public static double kD = 0.0;
 
     public static final double kIz = 0;
     public static final double kFF = 0;
@@ -125,7 +125,7 @@ public final class Constants {
     public static final double kEncoderDistancePerPulse = 0.001; // Radians / pulse
 
     public static final double kTurretPIDTolerance = 0.5; // TODO
-    public static final double kTurretVisionXTolerance = 15; // Pixels?
+    public static final double kTurretVisionXTolerance = 2; // Pixels?
 
     public static final double kPixelScalar = 0.001;
   }
